@@ -15,3 +15,9 @@ probably be forgotten and start to mold in a few months.
 * Dat  4:
 * Day  5: C
 * Day  8: Java
+* Day  9: 
+* Day 10:
+* Day 11:
+* Day 12:
+* Day 13:
+* Day 14: Nim
