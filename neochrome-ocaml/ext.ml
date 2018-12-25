@@ -1,3 +1,25 @@
+let bind f g x = g (f x)
+let (>>) = bind
+
+module Option = struct
+
+  let is_none = function None -> true | _ -> false
+  let is_some = function None -> false | _ -> true
+
+  let value = function
+    | None -> raise (Invalid_argument "Must not be None")
+    | Some x -> x
+
+  let value_default default = function
+    | None -> default
+    | Some x -> x
+
+  let map f = function
+    | None -> None
+    | Some x -> Some (f x)
+
+end
+
 module File = struct
 
   let open_in filename fn =
@@ -102,12 +124,19 @@ module List = struct
       | y :: ys -> loop (y :: xs') ys
     in loop [] xs
 
+  let filter_map f xs =
+    xs
+    |> map f
+    |> filter Option.is_some
+    |> map Option.value
+
 end
 
 module Map = struct
   module type S = sig
     include Map.S
     val maxf: (key -> 'a -> 'b) -> 'a t -> key * 'a
+    val find_default : key -> 'a -> 'a t -> 'a
   end
 
   module Make (Ord: Map.OrderedType) : S with type key = Ord.t = struct
@@ -124,6 +153,11 @@ module Map = struct
       |> function
         | None -> failwith "no values"
         | Some (_,max) -> max
+
+    let find_default k d m =
+      match find_opt k m with
+      | None -> d
+      | Some x -> x
 
   end
 end
